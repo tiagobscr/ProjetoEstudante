@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template/Layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<script type="text/javascript">
+		PrimeFaces.locales['de'] = {
+			closeText : 'Schließen',
+			prevText : 'Zurück',
+			nextText : 'Weiter',
+			monthNames : [ 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+					'Juli', 'August', 'September', 'Oktober', 'November',
+					'Dezember' ],
+			monthNamesShort : [ 'Jan', 'Feb', 'März', 'Apr', 'Mai', 'Jun',
+					'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez' ],
+			dayNames : [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch',
+					'Donnerstag', 'Freitag', 'Samstag' ],
+			dayNamesShort : [ 'Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam' ],
+			dayNamesMin : [ 'S', 'M', 'D', 'M ', 'D', 'F ', 'S' ],
+			weekHeader : 'Woche',
+			FirstDay : 1,
+			isRTL : false,
+			showMonthAfterYear : false,
+			yearSuffix : '',
+			timeOnlyTitle : 'Nur Zeit',
+			timeText : 'Zeit',
+			hourText : 'Stunde',
+			minuteText : 'Minute',
+			secondText : 'Sekunde',
+			currentText : 'Aktuelles Datum',
+			ampm : false,
+			month : 'Monat',
+			week : 'Woche',
+			day : 'Tag',
+			allDayText : 'Ganzer Tag'
+		};
+	</script>
+
+
+
+
+
+
+	<ui:define name="corpo">
+
+		<p:panel id="painel"
+			header="Lista de Matérias de #{MateriaBean.usuarioLogado.nome} "
+			style="margin-bottom:10px; width: 70%">
+
+
+			<h:form id="frm">
+				<p:messages showDetail="false" showSummary="true" autoUpdate="true" />
+				<p:panelGrid style="width: 50%">
+					<p:row>
+						<p:column style="width:40px">
+							<h:outputLabel value="Matéria: " />
+						</p:column>
+						<p:column colspan="2" style="width:400px">
+							<p:inputText value="#{MateriaBean.nomePesquisa}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:40px">
+							<h:outputLabel value="Curso: " />
+						</p:column>
+						<p:column colspan="2" style="width:400px">
+							<p:inputText value="#{MateriaBean.cursoPesquisa}" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:100px">
+							<h:outputLabel value="Buscar: " />
+						</p:column>
+						<p:column colspan="2" style="width:400px">
+							<p:commandLink value=" Pesquisar " update="@form,painel"
+								style="margin-right:10px;color:blue;"
+								actionListener="#{MateriaBean.pesquisaGeral}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<p:row>
+					<p:dataTable value="#{MateriaBean.materias}" var="materia"
+						border="1" cellspacing="0" cellpadding="2" paginator="true"
+						rows="5" paginatorPosition="bottom">
+						<p:column headerText="Nome" sortBy="#{materia.nome}">
+							<h:outputText value="#{materia.nome}" />
+						</p:column>
+						<p:column headerText="Atividades">
+							<h:outputText value="#{materia.atividades}" />
+						</p:column>
+						<p:column headerText="Observação">
+							<h:outputText value="#{materia.observacao}" />
+						</p:column>
+
+						<p:column headerText="Curso">
+							<h:outputText value="#{materia.curso}" />
+						</p:column>
+						<p:column headerText="Exibir" width="10%">
+							<p:commandButton update="@form"
+								oncomplete="PF('usuarioDialog3').show()" icon="fa fa-fw fa-edit"
+								title="Editar">
+								<f:setPropertyActionListener value="#{materia}"
+									target="#{MateriaBean.materia}" />
+							</p:commandButton>
+						</p:column>
+						<p:column headerText="Excluir" width="10%">
+							<p:commandButton update="@form"
+								oncomplete="PF('usuarioDialog2').show()"
+								icon="fa fa-fw fa-remove" title="Excluir">
+								<f:setPropertyActionListener value="#{materia}"
+									target="#{MateriaBean.materia}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:row>
+				<p:dialog header="Excluir matéria?" widgetVar="usuarioDialog2"
+					modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="usuarioDetail2" style="text-align:center;">
+						<p:panelGrid columns="2" columnClasses="label,value">
+							<h:outputText value="Nome" />
+							<h:outputText value="#{MateriaBean.materia.nome}" />
+							<h:outputText value="Email" />
+							<h:outputText value="#{MateriaBean.materia.aluno.email}" />
+							<h:outputText value="Atividades:" />
+							<h:outputText value="#{MateriaBean.materia.atividades}" />
+							<p:commandButton value="Confirma" updta="@form"
+								onclick="dialog.hide()" action="#{MateriaBean.removerMateria}">
+								<f:setPropertyActionListener target="#{MateriaBean.materia}"
+									value="#{MateriaBean.materia}" />
+							</p:commandButton>
+
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:dialog>
+
+				<p:dialog header="Exibir materia" widgetVar="usuarioDialog3"
+					modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="usuarioDetail3" style="text-align:center;">
+						<p:panelGrid columns="8" columnClasses="label,value">
+							<h:outputText value="Nome:" />
+							<h:outputText value="#{MateriaBean.materia.nome}" />
+							<h:outputText value="Aluno:" />
+							<h:outputText value="#{MateriaBean.materia.aluno.nome}" />
+							<h:outputText value="Curso:" />
+							<h:inputText value="#{MateriaBean.materia.curso}" />
+							<h:outputText value="Observações:" />
+							<h:inputText size="25" value="#{MateriaBean.materia.observacao}" />
+							<p:commandButton value="Salvar" updta="@form" style="color:blue;"
+								onclick="dialog.hide()" action="#{MateriaBean.exibirMateria}">
+								<f:setPropertyActionListener target="#{MateriaBean.materia}"
+									value="#{MateriaBean.materia}" />
+							</p:commandButton>
+
+						</p:panelGrid>
+					</p:outputPanel>
+					<p:column colspan="4">
+						<p:panel id="panel2" header="Atividades">
+							<p:panelGrid columns="12" style="width: 80%">
+								<h:outputLabel value="Nome: " />
+								<p:inputText size="15" value="#{MateriaBean.atividade.nome}" />
+								<h:outputLabel value="Descrição: " />
+								<h:inputTextarea rows="5" cols="15" id="desc"
+									value="#{MateriaBean.atividade.descricao}" />
+								<h:outputLabel value="Tipo: " />
+								<p:selectOneMenu style="width:60px"
+									value="#{MateriaBean.atividade.tipo}">
+									<f:selectItem itemLabel="SALA" itemValue="SALA" />
+									<f:selectItem itemLabel="CASA" itemValue="CASA" />
+								</p:selectOneMenu>
+								<h:outputLabel value="Status: " />
+								<p:selectOneMenu style="width:110px"
+									value="#{MateriaBean.atividade.status}">
+									<f:selectItem itemLabel="ATRIBUIDO" itemValue="ATRIBUIDO" />
+									<f:selectItem itemLabel="ANDAMENTO" itemValue="ANDAMENTO" />
+									<f:selectItem itemLabel="ENTREGAR" itemValue="ENTREGAR" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="mask" value="Data entrega:" />
+								<p:calendar id="mask"
+									value="#{MateriaBean.atividade.dataEntrega}"
+									pattern="dd/MM/yyyy" mask="true" />
+
+
+								<p:commandLink value="Adicionar " style="color:blue;"
+									update="atividades"
+									actionListener="#{MateriaBean.adicionarAtividade}" />
+							</p:panelGrid>
+							<p:dataTable id="atividades" var="atividade"
+								value="#{MateriaBean.materia.atividades}">
+								<p:column headerText="Nome">
+									<h:outputText value="#{atividade.nome}" />
+								</p:column>
+								<p:column headerText="Desc">
+									<h:outputText value="#{atividade.descricao}" />
+								</p:column>
+								<p:column headerText="Tipo">
+									<h:outputText value="#{atividade.tipo}" />
+								</p:column>
+								<p:column headerText="Status" id="status">
+									<p:selectOneMenu style="width:110px"
+										value="#{atividade.status}">
+										<f:selectItem itemLabel="ATRIBUIDO" itemValue="ATRIBUIDO" />
+										<f:selectItem itemLabel="ANDAMENTO" itemValue="ANDAMENTO" />
+										<f:selectItem itemLabel="ENTREGAR" itemValue="ENTREGAR" />
+										<p:ajax listener="#{MateriaBean.atualizaData}"
+											update="dstatus" />
+									</p:selectOneMenu>
+
+								</p:column>
+
+								<p:column headerText="Data status">
+									<h:outputText value="#{atividade.dataAtribuido}" id="dstatus">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Data entrega">
+									<h:outputText value="#{atividade.dataEntrega}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Remover" width="10%">
+									<p:commandButton icon="pi pi-times" update="atividades"
+										action="#{MateriaBean.removerAtividade}">
+										<f:setPropertyActionListener target="#{MateriaBean.atividade}"
+											value="#{atividade}" />
+									</p:commandButton>
+								</p:column>
+
+							</p:dataTable>
+						</p:panel>
+					</p:column>
+				</p:dialog>
+			</h:form>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>
